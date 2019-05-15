@@ -1,0 +1,145 @@
+     1                                  section .data
+     2                                  
+     3 00000000 256C6600                    formaEntrada: db "%lf", 0
+     4 00000004 256C660A00                  formaSaida: db "%lf", 10, 0 ; pula a linha
+     5 00000009 4572726F2064697669-         mensagemDivZero: db "Erro divisao por zero", 10, 0 ; pula a linha
+     6 00000012 73616F20706F72207A-
+     7 0000001B 65726F0A00         
+     8 00000020 00000000                    z: dd 0.0
+     9                                  
+    10                                  section .bss
+    11                                  
+    12 00000000 <res 00000008>              f1: resq 1
+    13 00000008 <res 00000008>              f2: resq 1
+    14                                  
+    15                                  section .text
+    16                                      
+    17                                      global main 
+    18                                      extern scanf 
+    19                                      extern printf     
+    20                                  
+    21                                  main:
+    22                                  
+    23 00000000 55                      	push EBP        ; base pointer
+    24 00000001 89E5                        mov EBP, ESP    ; put stack pntr in EBP
+    25 00000003 60                          pushad          ; pushes all registers on stackecx
+    26                                  
+    27 00000004 68[00000000]                push f1
+    28 00000009 68[00000000]                push formaEntrada 
+    29 0000000E E8(00000000)                call scanf
+    30 00000013 83C408                      add esp, 8  
+    31                                  
+    32                                  loop:
+    33                                  
+    34                                      ;call soma
+    35                                  
+    36                                      ;call subtracao
+    37                                  
+    38                                  ;    call multiplicacao
+    39                                  
+    40 00000016 E8B1000000                  call divisao
+    41                                  
+    42 0000001B EBF9                        jmp loop
+    43                                  
+    44 0000001D 61                        	popad   
+    45 0000001E 89EC                        mov ESP, EBP
+    46 00000020 5D                          pop EBP
+    47                                  
+    48 00000021 C3                          ret 
+    49 00000022 CD80                        int 80h
+    50                                  
+    51                                  
+    52                                  soma: 
+    53                                  
+    54 00000024 68[08000000]                push f2
+    55 00000029 68[00000000]                push formaEntrada
+    56 0000002E E8(00000000)                call scanf
+    57 00000033 83C408                      add esp, 8
+    58                                  
+    59 00000036 DD05[00000000]              fld qword[f1]
+    60 0000003C DC05[08000000]              fadd qword[f2]
+    61 00000042 DD15[00000000]              fst qword[f1]
+    62                                  
+    63 00000048 83EC08                      sub esp, 8
+    64 0000004B DD1424                      fst qword[esp]
+    65 0000004E 68[04000000]                push formaSaida
+    66 00000053 E8(00000000)                call printf
+    67 00000058 83C40C                      add esp, 12
+    68                                  
+    69 0000005B C3                          ret
+    70                                  
+    71                                  subtracao: 
+    72                                  
+    73 0000005C 68[08000000]                push f2
+    74 00000061 68[00000000]                push formaEntrada
+    75 00000066 E8(00000000)                call scanf
+    76 0000006B 83C408                      add esp, 8
+    77                                  
+    78 0000006E DD05[00000000]              fld qword[f1]
+    79 00000074 DC25[08000000]              fsub qword[f2]
+    80 0000007A DD15[00000000]              fst qword[f1]
+    81                                  
+    82 00000080 83EC08                      sub esp, 8
+    83 00000083 DD1424                      fst qword[esp]
+    84 00000086 68[04000000]                push formaSaida
+    85 0000008B E8(00000000)                call printf
+    86 00000090 83C40C                      add esp, 12
+    87                                  
+    88 00000093 C3                          ret
+    89                                  
+    90                                  multiplicacao:
+    91                                  
+    92 00000094 68[08000000]                push f2
+    93 00000099 68[00000000]                push formaEntrada
+    94 0000009E E8(00000000)                call scanf
+    95 000000A3 83C408                      add esp, 8
+    96                                  
+    97 000000A6 DD05[00000000]              fld qword[f1]
+    98 000000AC DC0D[08000000]              fmul qword[f2]
+    99 000000B2 DD15[00000000]              fst qword[f1]
+   100                                  
+   101 000000B8 83EC08                      sub esp, 8
+   102 000000BB DD1424                      fst qword[esp]
+   103 000000BE 68[04000000]                push formaSaida
+   104 000000C3 E8(00000000)                call printf
+   105 000000C8 83C40C                      add esp, 12
+   106                                  
+   107 000000CB C3                          ret
+   108                                  
+   109                                  ;TEM QUE TRATAR DIVISAO POR ZERO
+   110                                  divisao:
+   111                                  
+   112 000000CC 68[08000000]            	push f2
+   113 000000D1 68[00000000]                push formaEntrada
+   114 000000D6 E8(00000000)                call scanf
+   115 000000DB 83C408                      add esp, 8
+   116                                      
+   117                                      
+   118 000000DE DD05[08000000]              fld qword[f2]
+   119 000000E4 DD05[20000000]              fld qword [z]
+   120 000000EA DFF1                    	fcomip 
+   121 000000EC 7426                    	je erroDivisao      
+   122                                  
+   123 000000EE DD05[00000000]              fld qword[f1]
+   124 000000F4 DC35[08000000]              fdiv qword[f2]
+   125 000000FA DD15[00000000]              fst qword[f1]
+   126                                  
+   127 00000100 83EC08                      sub esp, 8
+   128 00000103 DD1424                      fst qword[esp]
+   129 00000106 68[04000000]                push formaSaida
+   130 0000010B E8(00000000)                call printf
+   131 00000110 83C40C                      add esp, 12
+   132                                  
+   133 00000113 C3                          ret
+   134                                  
+   135                                  erroDivisao:
+   136                                  
+   137 00000114 68[09000000]            	push mensagemDivZero
+   138 00000119 E8(00000000)            	call printf
+   139 0000011E EBAC                    	jmp divisao
+   140                                  
+   141 00000120 C3                      	ret
+   142                                  
+   143                                  
+   144                                  
+   145                                  

@@ -1,0 +1,48 @@
+     1                                  section .data
+     2                                  
+     3                                  	;real
+     4 00000000 256C6600                    formaEntrada: db "%lf", 0
+     5 00000004 256C660A00                  formaSaida: db "%lf", 10, 0 ; pula a linha
+     6 00000009 494755414C0A00              mensagem: db "IGUAL", 10, 0
+     7                                  
+     8 00000010 00000040                    z: dd 2.0
+     9                                  
+    10                                  section .bss
+    11                                  
+    12 00000000 <res 00000008>              f1: resq 1
+    13 00000008 <res 00000008>              f2: resq 1
+    14                                  
+    15                                  
+    16                                  section .text
+    17                                      
+    18                                      global main 
+    19                                      extern scanf 
+    20                                      extern printf     
+    21                                  
+    22                                  
+    23                                  
+    24                                  main:
+    25                                  
+    26 00000000 55                      	push EBP        ; base pointer
+    27 00000001 89E5                        mov EBP, ESP    ; put stack pntr in EBP
+    28 00000003 60                          pushad          ; pushes all registers on stackecx
+    29                                  
+    30                                  
+    31                                  
+    32 00000004 FF35[10000000]              push dword[z]
+    33 0000000A 68[04000000]                push formaSaida
+    34 0000000F E8(00000000)                call printf
+    35                                  
+    36                                  
+    37 00000014 89EC                        mov     esp, ebp	; takedown stack frame
+    38 00000016 5D                          pop     ebp		; same as "leave" op
+    39                                  
+    40 00000017 B800000000              	mov	eax,0		;  normal, no error, return value
+    41 0000001C C3                      	ret	
+    42                                  
+    43                                  igual: 
+    44                                  
+    45 0000001D 68[09000000]             	push mensagem
+    46 00000022 E8(00000000)            	call printf
+    47                                  
+    48 00000027 C3                      	ret
